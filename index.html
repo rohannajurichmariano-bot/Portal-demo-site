@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get Started | Militarians Today</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #eef2f7;
+}
+
+.get-started {
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #eef2f7, #dfe6ed);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.get-started .logo {
+    width: 120px;
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+.get-started h1 {
+    font-size: 2.3rem;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.get-started h3 {
+    color: #555;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.disclaimer {
+    max-width: 520px;
+    font-size: 0.9rem;
+    color: #555;
+    background: #ffffffc9;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.start-btn {
+    display: inline-block;
+    text-decoration: none;
+    background: #2c3e50;
+    color: white;
+    padding: 14px 32px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.start-btn:hover {
+    background: #394f66;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+    .get-started h1 {
+        font-size: 1.9rem;
+    }
+
+    .get-started .logo {
+        width: 100px;
+    }
+
+    .disclaimer {
+        font-size: 0.85rem;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="get-started">
+    <h1>Militarians Today</h1>
+
+    <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS65VuxXZlmBRGpOkJ86VCo40RrYAf3lNS-Dw&s"
+        alt="Fort Magsaysay National High School Logo"
+        class="logo"
+    >
+
+    <h3>Fort Magsaysay National High School</h3>
+
+    <p class="disclaimer">
+        ⚠️ This is a <strong>school demo portal</strong> for students of
+        <strong>Fort Magsaysay National High School</strong>.
+        Information entered here is stored <strong>locally in the browser only</strong>
+        and is not sent to any server. Do not use real sensitive information.
+    </p>
+
+    <a href="student-portal.html" class="start-btn">Student Portal</a>
+</div>
+
+</body>
+</html>

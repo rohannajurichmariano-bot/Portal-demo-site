@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sign Up – Militarians Today</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #eef2f7;
+    color: #333;
+}
+
+header {
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+
+header img {
+    position: absolute;
+    left: 20px;
+    top: 15px;
+    width: 55px;
+    border-radius: 8px;
+}
+
+header h1 {
+    font-size: 1.8rem;
+}
+
+.auth-container {
+    min-height: calc(100vh - 90px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-box {
+    background: white;
+    padding: 30px;
+    width: 100%;
+    max-width: 380px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.auth-box h2 {
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.disclaimer {
+    font-size: 0.85rem;
+    background: #f5f7fa;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+    color: #555;
+}
+
+.auth-box input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.auth-box button {
+    width: 100%;
+    padding: 12px;
+    background:#2c3e50;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.auth-box button:hover {
+    background: #394f66;
+}
+
+.auth-link {
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.auth-link a {
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: 600;
+    margin: 0 5px;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+/* Popup */
+.popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.popup.hidden {
+    display: none;
+}
+
+.popup-card {
+    background: white;
+    padding: 25px;
+    width: 90%;
+    max-width: 350px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: scaleIn 0.3s ease;
+}
+
+.popup-card h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.popup-card p {
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}
+
+.popup-card button {
+    background:#2c3e50;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 600px) {
+    header {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    header img {
+        position: static;
+        width: 45px;
+        margin-bottom: 6px;
+    }
+
+    header h1 {
+        font-size: 1.25rem;
+    }
+
+    .auth-container {
+        padding: 20px 15px;
+        align-items: flex-start;
+    }
+
+    .auth-box {
+        margin-top: 20px;
+        padding: 22px 18px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS65VuxXZlmBRGpOkJ86VCo40RrYAf3lNS-Dw&s" alt="Logo">
+    <h1>Militarians Today</h1>
+</header>
+
+<div class="auth-container">
+<form class="auth-box" onsubmit="registerStudent(event)">
+    <h2>Student Registration</h2>
+
+    <p class="disclaimer">
+        ⚠️ This is a <strong>school demo portal</strong> for students of
+        <strong>Fort Magsaysay National High School</strong>.
+        Data is stored <strong>locally in the browser only</strong>.
+        Do not use real sensitive information.
+    </p>
+
+    <input type="text" id="idNumber" placeholder="ID Number" required>
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="text" id="grade" placeholder="Grade / Section" required>
+    <input type="tel" id="phone" placeholder="Phone Number (11 digits)" maxlength="11" pattern="[0-9]{11}" required>
+    <input type="password" id="password" placeholder="Password" required>
+
+    <button type="submit">Register</button>
+
+    <p class="auth-link">
+        Already have an account?
+        <a href="student-login.html">Log in</a> |
+        <a href="adminpage.html">Admin</a>
+    </p>
+</form>
+</div>
+
+<div id="popup" class="popup hidden">
+    <div class="popup-card">
+        <h3 id="popup-title"></h3>
+        <p id="popup-message"></p>
+        <button onclick="closePopup()">OK</button>
+    </div>
+</div>
+
+<script>
+function hashPassword(password) {
+    return btoa(password);
+}
+
+function showPopup(title, message, redirect = "") {
+    document.getElementById("popup-title").innerText = title;
+    document.getElementById("popup-message").innerText = message;
+
+    const popup = document.getElementById("popup");
+    popup.classList.remove("hidden");
+    popup.dataset.redirect = redirect;
+}
+
+function closePopup() {
+    const popup = document.getElementById("popup");
+    popup.classList.add("hidden");
+
+    if (popup.dataset.redirect) {
+        window.location.href = popup.dataset.redirect;
+    }
+}
+
+function registerStudent(e) {
+    e.preventDefault();
+
+    const id = document.getElementById("idNumber").value.trim();
+    const password = document.getElementById("password").value;
+
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+
+    if (students.some(s => s.id === id)) {
+        showPopup("Registration Failed", "This ID number is already registered.");
+        return;
+    }
+
+    if (!password) {
+        showPopup("Error", "Password cannot be empty.");
+        return;
+    }
+
+    const student = {
+        id,
+        name: document.getElementById("name").value.trim(),
+        grade: document.getElementById("grade").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        password: hashPassword(password),
+        status: "Pending",
+        registeredAt: Date.now()
+    };
+
+    students.push(student);
+    localStorage.setItem("students", JSON.stringify(students));
+
+    showPopup(
+        "Registration Successful",
+        "Student registered successfully. Waiting for admin approval.",
+        "student-login.html"
+    );
+}
+</script>
+
+</body>
+</html>

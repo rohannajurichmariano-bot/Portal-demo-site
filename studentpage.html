@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Militarians Today - Student</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    background: linear-gradient(180deg, #f4f6f9, #e9edf2);
+    color: #2c3e50;
+}
+
+.main-header {
+    background: linear-gradient(135deg, #2c3e50, #3b5166);
+    color: white;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-left img {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+}
+
+.header-left h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.account {
+    position: relative;
+}
+
+.login-icon {
+    background: rgba(255,255,255,0.15);
+    font-size: 22px;
+    padding: 9px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.account-menu {
+    position: absolute;
+    right: 0;
+    top: 52px;
+    background: #2c3e50;
+    width: 230px;
+    padding: 16px;
+    border-radius: 14px;
+    box-shadow: 0 14px 32px rgba(0,0,0,0.2);
+    color: white;
+    z-index: 1000;
+}
+
+.account-menu.hidden {
+    display: none;
+}
+
+.account-menu button {
+    width: 100%;
+    padding: 10px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+nav {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.nav-header {
+    display: none;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    padding: 14px 0;
+}
+
+.nav-links li {
+    margin: 0 10px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 10px;
+}
+
+.nav-links a:hover {
+    background: #1abc9c;
+    color: white;
+}
+
+.burger {
+    font-size: 26px;
+    cursor: pointer;
+}
+
+.welcome-box {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 14px 20px;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    border-left: 6px solid #1abc9c;
+}
+
+.welcome-box h2 span {
+    color: #1abc9c;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.home-banner {
+    width: 100%;
+    border-radius: 18px;
+    margin-bottom: 30px;
+}
+
+section {
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    margin-bottom: 35px;
+    box-shadow: 0 14px 32px rgba(0,0,0,0.08);
+}
+
+section h2 {
+    margin-bottom: 22px;
+    border-left: 5px solid #1abc9c;
+    padding-left: 12px;
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 22px;
+}
+
+.event-card {
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
+    text-align: center;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+}
+
+.event-card img {
+    width: 100%;
+    border-radius: 12px;
+    margin: 10px 0;
+}
+
+.article-card {
+    background: white;
+    padding: 20px;
+    border-left: 5px solid #e74c3c;
+    border-radius: 14px;
+    margin-bottom: 15px;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+}
+</style>
+</head>
+
+<body>
+
+<header class="main-header">
+    <div class="header-left">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS65VuxXZlmBRGpOkJ86VCo40RrYAf3lNS-Dw&s">
+        <h1>Militarians Today</h1>
+    </div>
+
+    <div class="account">
+        <span id="accountIcon" class="login-icon">👤</span>
+        <div id="accountMenu" class="account-menu hidden">
+            <p><strong>Name:</strong> <span id="accName"></span></p>
+            <p><strong>Grade / Section:</strong> <span id="accGrade"></span></p>
+            <hr>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+</header>
+
+<nav>
+    <div class="nav-header">
+        <span class="burger" id="burger">&#9776;</span>
+    </div>
+    <ul id="menuList" class="nav-links">
+        <li><a href="#events">Events</a></li>
+        <li><a href="#announcements">Announcements</a></li>
+    </ul>
+</nav>
+
+<div class="welcome-box">
+    <h2 id="studentName"></h2>
+</div>
+
+<div class="container">
+    <img src="home.jpg" class="home-banner">
+
+    <section id="events">
+        <h2>Events</h2>
+        <div class="events-grid" id="eventsContainer"></div>
+    </section>
+
+    <section id="announcements">
+        <h2>Announcements</h2>
+        <div id="announcementsContainer"></div>
+    </section>
+</div>
+
+<script>
+const student = JSON.parse(localStorage.getItem("currentStudent"));
+if (!student) location.href = "login.html";
+
+document.getElementById("studentName").innerHTML =
+    `Welcome, <span>${student.name}</span>`;
+document.getElementById("accName").innerText = student.name;
+document.getElementById("accGrade").innerText = student.grade;
+
+document.getElementById("accountIcon").onclick = () =>
+    document.getElementById("accountMenu").classList.toggle("hidden");
+
+document.getElementById("burger").onclick = () =>
+    document.getElementById("menuList").classList.toggle("show");
+
+function logout() {
+    localStorage.removeItem("currentStudent");
+    location.href = "login.html";
+}
+
+function loadStudentEvents() {
+    const box = document.getElementById("eventsContainer");
+    const events = JSON.parse(localStorage.getItem("events")) || [];
+    box.innerHTML = events.length ? "" : "<p>No events available.</p>";
+
+    events.forEach(e => {
+        box.innerHTML += `
+            <div class="event-card">
+                <h3>${e.title} — ${e.date}</h3>
+                <img src="${e.image}">
+                <p>${e.description}</p>
+            </div>`;
+    });
+}
+
+function loadStudentAnnouncements() {
+    const box = document.getElementById("announcementsContainer");
+    const data = JSON.parse(localStorage.getItem("announcements")) || [];
+    box.innerHTML = data.length ? "" : "<p>No announcements available.</p>";
+
+    data.forEach(a => {
+        box.innerHTML += `
+            <div class="article-card">
+                <h3>${a.title}</h3>
+                <p>${a.message}</p>
+            </div>`;
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadStudentEvents();
+    loadStudentAnnouncements();
+});
+</script>
+
+</body>
+</html>
