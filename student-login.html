@@ -231,61 +231,283 @@ header h1 {
   </div>
 </div>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login – Militarians Today</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #eef2f7;
+    color: #333;
+}
+
+header {
+    background: #2c3e50;
+    color: white;
+    padding: 18px 15px;
+    text-align: center;
+    position: relative;
+}
+
+header img {
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    width: 50px;
+    border-radius: 8px;
+}
+
+header h1 {
+    font-size: 1.6rem;
+}
+
+.auth-container {
+    min-height: calc(100vh - 90px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.auth-box {
+    background: white;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 380px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.auth-box h2 {
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.disclaimer {
+    font-size: 0.85rem;
+    background: #f5f7fa;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+    color: #555;
+}
+
+.auth-box input {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+.auth-box button {
+    width: 100%;
+    padding: 14px;
+    background:#2c3e50;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.auth-box button:hover {
+    background: #394f66;
+}
+
+.auth-link {
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.auth-link a {
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+/* Popup */
+.popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.popup.hidden {
+    display: none;
+}
+
+.popup-card {
+    background: white;
+    padding: 25px;
+    width: 90%;
+    max-width: 320px;
+    border-radius: 15px;
+    text-align: center;
+    animation: scaleIn 0.25s ease;
+}
+
+.popup-card h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.popup-card p {
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+.popup-card button {
+    background:#2c3e50;
+    color: white;
+    padding: 12px;
+    width: 100%;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 600px) {
+    header {
+        padding: 12px 10px 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    header img {
+        position: static;
+        width: 45px;
+        margin-bottom: 6px;
+    }
+
+    header h1 {
+        font-size: 1.3rem;
+    }
+
+    .auth-container {
+        padding: 15px;
+        align-items: flex-start;
+    }
+
+    .auth-box {
+        margin-top: 20px;
+        padding: 24px 18px;
+        border-radius: 12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS65VuxXZlmBRGpOkJ86VCo40RrYAf3lNS-Dw&s" alt="Logo">
+    <h1>Militarians Today</h1>
+</header>
+
+<div class="auth-container">
+<form class="auth-box" onsubmit="loginStudent(event)">
+    <h2>Student Log In</h2>
+
+    <p class="disclaimer">
+        ⚠️ This is a <strong>school demo portal</strong> for students of
+        <strong>Fort Magsaysay National High School</strong>.
+        Data is stored <strong>locally in the browser only</strong>.
+        Do not use real sensitive information.
+    </p>
+
+    <input type="text" id="loginInput" placeholder="ID Number or Phone Number" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+
+    <button type="submit">Login</button>
+
+    <p class="auth-link">
+        Don’t have an account?
+        <a href="student-portal.html">Sign up</a>
+    </p>
+</form>
+</div>
+
+<div id="popup" class="popup hidden">
+  <div class="popup-card">
+    <h3 id="popup-title"></h3>
+    <p id="popup-message"></p>
+    <button onclick="closePopup()">OK</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const supabase = window.supabase.createClient(
+  "https://YOUR_PROJECT_ID.supabase.co",
+  "YOUR_PUBLIC_ANON_KEY"
+);
+
 function hashPassword(password) {
-    return btoa(password);
+  return btoa(password);
 }
 
-function showPopup(title, message, redirect = "") {
-    document.getElementById("popup-title").innerText = title;
-    document.getElementById("popup-message").innerText = message;
+async function loginStudent(e) {
+  e.preventDefault();
 
-    const popup = document.getElementById("popup");
-    popup.classList.remove("hidden");
-    popup.dataset.redirect = redirect;
-}
+  const input = document.getElementById("loginInput").value.trim();
+  const password = hashPassword(
+    document.getElementById("loginPassword").value
+  );
 
-function closePopup() {
-    const popup = document.getElementById("popup");
-    popup.classList.add("hidden");
+  const { data, error } = await supabase
+    .from("Students")
+    .select("*")
+    .or(`student_id.eq.${input},phone.eq.${input}`)
+    .eq("password", password)
+    .single();
 
-    if (popup.dataset.redirect) {
-        window.location.href = popup.dataset.redirect;
-    }
-}
+  if (error || !data) {
+    showPopup("Login Failed", "Invalid credentials.");
+    return;
+  }
 
-function loginStudent(e) {
-    e.preventDefault();
+  if (data.status !== "approved") {
+    showPopup("Pending", "Wait for admin approval.");
+    return;
+  }
 
-    const input = document.getElementById("loginInput").value.trim();
-    const password = document.getElementById("loginPassword").value.trim();
-
-    if (!input || !password) {
-        showPopup("Error", "Please fill in all fields.");
-        return;
-    }
-
-    const pass = hashPassword(password);
-    const students = JSON.parse(localStorage.getItem("students")) || [];
-
-    const student = students.find(
-        s => (s.id === input || s.phone === input) && s.password === pass
-    );
-
-    if (!student) {
-        showPopup("Login Failed", "Invalid ID/Phone number or password.");
-        return;
-    }
-
-    if (student.status !== "Confirmed") {
-        showPopup("Account Pending", "Wait for admin confirmation.");
-        return;
-    }
-
-    localStorage.setItem("currentStudent", JSON.stringify(student));
-    window.location.href = "studentpage.html";
+  localStorage.setItem("currentStudent", JSON.stringify(data));
+  window.location.href = "studentpage.html";
 }
 </script>
 
 </body>
 </html>
+
+</body>
+</html>
+
