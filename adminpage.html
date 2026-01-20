@@ -332,124 +332,164 @@ button {
     </table>
 </section>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+/* ================= SUPABASE ================= */
+const supabase = window.supabase.createClient(
+  "https://YOUR_PROJECT_ID.supabase.co",
+  "YOUR_PUBLIC_ANON_KEY"
+);
+
 document.addEventListener("DOMContentLoaded", () => {
-    loadStudents();
-    loadEvents();
-    loadAnnouncements();
+  loadStudents();
+  loadEvents();
+  loadAnnouncements();
 });
 
+/* ============ STUDENTS (SUPABASE) ============ */
+async function loadStudents() {
+  const tbody = document.getElementById("studentTableBody");
+  tbody.innerHTML = "";
+
+  const { data, error } = await supabase
+    .from("Students")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  data.forEach(s => {
+    tbody.innerHTML += `
+      <tr>
+        <td data-label="ID">${s.student_id}</td>
+        <td data-label="Name">${s.full_name}</td>
+        <td data-label="Grade">${s.grade_section}</td>
+        <td data-label="Status" class="status ${s.status}">
+          ${s.status}
+        </td>
+        <td data-label="Action">
+          <button onclick="updateStatus('${s.id}','approved')">Approve</button>
+          <button onclick="updateStatus('${s.id}','pending')">Pending</button>
+          <button class="delete-btn" onclick="deleteStudent('${s.id}')">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+async function updateStatus(id, status) {
+  const { error } = await supabase
+    .from("Students")
+    .update({ status })
+    .eq("id", id);
+
+  if (error) {
+    alert("Failed to update status");
+    console.error(error);
+    return;
+  }
+
+  loadStudents();
+}
+
+async function deleteStudent(id) {
+  if (!confirm("Delete this student?")) return;
+
+  const { error } = await supabase
+    .from("Students")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    alert("Delete failed");
+    console.error(error);
+    return;
+  }
+
+  loadStudents();
+}
+
+/* ============ UI ================= */
 function toggleMenu() {
-    const menu = document.getElementById("mobileMenu");
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  const menu = document.getElementById("mobileMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
-function loadStudents() {
-    const tbody = document.getElementById("studentTableBody");
-    tbody.innerHTML = "";
-    const students = JSON.parse(localStorage.getItem("students")) || [];
-
-    students.forEach(s => {
-        tbody.innerHTML += `
-        <tr>
-            <td data-label="ID">${s.id}</td>
-            <td data-label="Name">${s.name}</td>
-            <td data-label="Grade">${s.grade}</td>
-            <td data-label="Status" class="status ${s.status.toLowerCase()}">${s.status}</td>
-            <td data-label="Action">
-                <button onclick="updateStatus('${s.id}','Confirmed')">Confirm</button>
-                <button onclick="updateStatus('${s.id}','Pending')">Pending</button>
-                <button class="delete-btn" onclick="deleteStudent('${s.id}')">Delete</button>
-            </td>
-        </tr>`;
-    });
-}
-
-function updateStatus(id, status) {
-    let students = JSON.parse(localStorage.getItem("students")) || [];
-    students.forEach(s => { if (s.id === id) s.status = status; });
-    localStorage.setItem("students", JSON.stringify(students));
-    loadStudents();
-}
-
-function deleteStudent(id) {
-    if (!confirm("Delete this student?")) return;
-    let students = JSON.parse(localStorage.getItem("students")) || [];
-    students = students.filter(s => s.id !== id);
-    localStorage.setItem("students", JSON.stringify(students));
-    loadStudents();
-}
-
+/* ============ EVENTS (localStorage) ============ */
 function openEventForm() {
-    const title = prompt("Event Title:");
-    const date = prompt("Event Date:");
-    const image = prompt("Image URL:");
-    const description = prompt("Description:");
-    if (!title || !date || !image || !description) return;
+  const title = prompt("Event Title:");
+  const date = prompt("Event Date:");
+  const image = prompt("Image URL:");
+  const description = prompt("Description:");
+  if (!title || !date || !image || !description) return;
 
-    const events = JSON.parse(localStorage.getItem("events")) || [];
-    events.push({ title, date, image, description });
-    localStorage.setItem("events", JSON.stringify(events));
-    loadEvents();
+  const events = JSON.parse(localStorage.getItem("events")) || [];
+  events.push({ title, date, image, description });
+  localStorage.setItem("events", JSON.stringify(events));
+  loadEvents();
 }
 
 function loadEvents() {
-    const container = document.getElementById("eventsContainer");
-    container.innerHTML = "";
-    const events = JSON.parse(localStorage.getItem("events")) || [];
+  const container = document.getElementById("eventsContainer");
+  container.innerHTML = "";
+  const events = JSON.parse(localStorage.getItem("events")) || [];
 
-    events.forEach((e, i) => {
-        container.innerHTML += `
-        <div class="event-card">
-            <h3>${e.title} — ${e.date}</h3>
-            <img src="${e.image}">
-            <p>${e.description}</p>
-            <button class="delete-btn" onclick="deleteEvent(${i})">Delete</button>
-        </div>`;
-    });
+  events.forEach((e, i) => {
+    container.innerHTML += `
+      <div class="event-card">
+        <h3>${e.title} — ${e.date}</h3>
+        <img src="${e.image}">
+        <p>${e.description}</p>
+        <button class="delete-btn" onclick="deleteEvent(${i})">Delete</button>
+      </div>
+    `;
+  });
 }
 
 function deleteEvent(i) {
-    const events = JSON.parse(localStorage.getItem("events")) || [];
-    events.splice(i, 1);
-    localStorage.setItem("events", JSON.stringify(events));
-    loadEvents();
+  const events = JSON.parse(localStorage.getItem("events")) || [];
+  events.splice(i, 1);
+  localStorage.setItem("events", JSON.stringify(events));
+  loadEvents();
 }
 
+/* ============ ANNOUNCEMENTS (localStorage) ============ */
 function openAnnouncementForm() {
-    const title = prompt("Title:");
-    const message = prompt("Message:");
-    if (!title || !message) return;
+  const title = prompt("Title:");
+  const message = prompt("Message:");
+  if (!title || !message) return;
 
-    const announcements = JSON.parse(localStorage.getItem("announcements")) || [];
-    announcements.push({ title, message });
-    localStorage.setItem("announcements", JSON.stringify(announcements));
-    loadAnnouncements();
+  const announcements = JSON.parse(localStorage.getItem("announcements")) || [];
+  announcements.push({ title, message });
+  localStorage.setItem("announcements", JSON.stringify(announcements));
+  loadAnnouncements();
 }
 
 function loadAnnouncements() {
-    const container = document.getElementById("announcementsContainer");
-    container.innerHTML = "";
-    const announcements = JSON.parse(localStorage.getItem("announcements")) || [];
+  const container = document.getElementById("announcementsContainer");
+  container.innerHTML = "";
+  const announcements = JSON.parse(localStorage.getItem("announcements")) || [];
 
-    announcements.forEach((a, i) => {
-        container.innerHTML += `
-        <div class="article-card">
-            <h3>${a.title}</h3>
-            <p>${a.message}</p>
-            <button class="delete-btn" onclick="deleteAnnouncement(${i})">Delete</button>
-        </div>`;
-    });
+  announcements.forEach((a, i) => {
+    container.innerHTML += `
+      <div class="article-card">
+        <h3>${a.title}</h3>
+        <p>${a.message}</p>
+        <button class="delete-btn" onclick="deleteAnnouncement(${i})">Delete</button>
+      </div>
+    `;
+  });
 }
 
 function deleteAnnouncement(i) {
-    const announcements = JSON.parse(localStorage.getItem("announcements")) || [];
-    announcements.splice(i, 1);
-    localStorage.setItem("announcements", JSON.stringify(announcements));
-    loadAnnouncements();
+  const announcements = JSON.parse(localStorage.getItem("announcements")) || [];
+  announcements.splice(i, 1);
+  localStorage.setItem("announcements", JSON.stringify(announcements));
+  loadAnnouncements();
 }
 </script>
-
-</body>
-</html>
