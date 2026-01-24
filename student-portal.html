@@ -217,6 +217,8 @@ header h1 {
 
     <button type="submit">Register</button>
 
+
+
     <p class="auth-link">
         Already have an account?
         <a href="student-login.html">Log in</a> |
@@ -234,81 +236,42 @@ header h1 {
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const supabase = window.supabase.createClient(
-  "https://YOUR_PROJECT_ID.supabase.co",
-  "YOUR_PUBLIC_ANON_KEY"
+const SUPABASE_URL = "https://xxxxx.supabase.co";
+const SUPABASE_KEY = "YOUR_PUBLIC_ANON_KEY";
+
+window.supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
 );
+</script>
+ <script src="supabase.js"></script>
+<script>
+const supabase = window.supabaseClient;
 
-// Simple password hash (demo only)
-function hashPassword(password) {
-  return btoa(password);
-}
-
-function showPopup(title, message, redirect = "") {
-  document.getElementById("popup-title").innerText = title;
-  document.getElementById("popup-message").innerText = message;
-
-  const popup = document.getElementById("popup");
-  popup.classList.remove("hidden");
-  popup.dataset.redirect = redirect;
-}
-
-function closePopup() {
-  const popup = document.getElementById("popup");
-  popup.classList.add("hidden");
-
-  if (popup.dataset.redirect) {
-    window.location.href = popup.dataset.redirect;
-  }
-}
-
-async function registerStudent(e) {
-  e.preventDefault();
-
-  const student_id = document.getElementById("idNumber").value.trim();
-  const full_name = document.getElementById("name").value.trim();
-  const grade_section = document.getElementById("grade").value.trim();
-  const phone = document.getElementById("phone").value.trim();
+async function registerStudent() {
+  const student_id = document.getElementById("studentId").value;
+  const full_name = document.getElementById("fullName").value;
+  const grade_section = document.getElementById("grade").value;
+  const phone = document.getElementById("phone").value;
   const password = document.getElementById("password").value;
 
-  if (!password) {
-    showPopup("Error", "Password cannot be empty.");
-    return;
-  }
-
-  // Check if student ID already exists
-  const { data: existing } = await supabase
-    .from("Students")
-    .select("id")
-    .eq("student_id", student_id)
-    .single();
-
-  if (existing) {
-    showPopup("Registration Failed", "This ID number is already registered.");
-    return;
-  }
-
-  // Insert new student
-  const { error } = await supabase.from("Students").insert([{
-    student_id,
-    full_name,
-    grade_section,
-    phone,
-    password: hashPassword(password),
-    status: "pending"
-  }]);
+  const { error } = await supabase
+    .from("students")
+    .insert([{
+      student_id,
+      full_name,
+      grade_section,
+      phone,
+      password,
+      status: "pending"
+    }]);
 
   if (error) {
-    console.error(error);
-    showPopup("Error", "Registration failed. Please try again.");
-    return;
+    alert(error.message);
+  } else {
+    alert("Registration successful! Wait for admin approval.");
+    location.href = "student-login.html";
   }
-
-  showPopup(
-    "Registration Successful",
-    "Student registered successfully. Waiting for admin approval.",
-    "student-login.html"
-  );
 }
 </script>
 
