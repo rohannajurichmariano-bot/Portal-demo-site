@@ -230,44 +230,52 @@ header h1 {
     <button onclick="closePopup()">OK</button>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = "https://xxxxx.supabase.co";
-const SUPABASE_KEY = "YOUR_PUBLIC_ANON_KEY";
+function hashPassword(password) {
+    return btoa(password);
+}
 
-window.supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-</script>
+function showPopup(title, message, redirect = "") {
+    document.getElementById("popup-title").innerText = title;
+    document.getElementById("popup-message").innerText = message;
+    const popup = document.getElementById("popup");
+    popup.classList.remove("hidden");
+    popup.dataset.redirect = redirect;
+}
 
-<script src="supabase.js"></script>
-<script>
-const supabase = window.supabaseClient;
+function closePopup() {
+    const popup = document.getElementById("popup");
+    popup.classList.add("hidden");
 
-async function studentLogin() {
-  const student_id = document.getElementById("studentId").value;
-  const password = document.getElementById("password").value;
+    if (popup.dataset.redirect) {
+        window.location.href = popup.dataset.redirect;
+    }
+}
 
-  const { data, error } = await supabase
-    .from("students")
-    .select("*")
-    .eq("student_id", student_id)
-    .eq("password", password)
-    .single();
+function loginStudent(e) {
+    e.preventDefault();
 
-  if (error || !data) {
-    alert("Invalid login");
-    return;
-  }
+    const input = document.getElementById("loginInput").value.trim();
+    const pass = hashPassword(document.getElementById("loginPassword").value);
 
-  if (data.status !== "approved") {
-    alert("Your account is not approved yet.");
-    return;
-  }
+    const students = JSON.parse(localStorage.getItem("students")) || [];
 
-  localStorage.setItem("student", JSON.stringify(data));
-  location.href = "student-dashboard.html";
+    const student = students.find(
+        s => (s.id === input || s.phone === input) && s.password === pass
+    );
+
+    if (!student) {
+        showPopup("Login Failed", "Invalid ID/Phone number or password.");
+        return;
+    }
+
+    if (student.status !== "Confirmed") {
+        showPopup("Account Pending", "Wait for admin confirmation.");
+        return;
+    }
+
+    localStorage.setItem("currentStudent", JSON.stringify(student));
+    window.location.href = "studentpage.html";
 }
 </script>
 
