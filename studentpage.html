@@ -240,26 +240,63 @@ section h2 {
         <div id="announcementsContainer"></div>
     </section>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = "https://xxxxx.supabase.co";
-const SUPABASE_KEY = "YOUR_PUBLIC_ANON_KEY";
 
-window.supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-</script>
 <script>
-const student = JSON.parse(localStorage.getItem("student"));
+const student = JSON.parse(localStorage.getItem("currentStudent"));
+if (!student) location.href = "login.html";
 
-if (!student) {
-  location.href = "student-login.html";
+document.getElementById("studentName").innerHTML =
+    `Welcome, <span>${student.name}</span>`;
+document.getElementById("accName").innerText = student.name;
+document.getElementById("accGrade").innerText = student.grade;
+
+document.getElementById("accountIcon").onclick = () =>
+    document.getElementById("accountMenu").classList.toggle("hidden");
+
+document.getElementById("burger").onclick = () =>
+    document.getElementById("menuList").classList.toggle("show");
+
+function logout() {
+    localStorage.removeItem("currentStudent");
+    location.href = "login.html";
 }
 
-document.getElementById("studentName").innerText = student.full_name;
-document.getElementById("studentGrade").innerText = student.grade_section;
+function loadStudentEvents() {
+    const box = document.getElementById("eventsContainer");
+    const events = JSON.parse(localStorage.getItem("events")) || [];
+    box.innerHTML = events.length ? "" : "<p>No events available.</p>";
+
+    events.forEach(e => {
+        box.innerHTML += `
+            <div class="event-card">
+                <h3>${e.title} — ${e.date}</h3>
+                <img src="${e.image}">
+                <p>${e.description}</p>
+            </div>`;
+    });
+}
+
+function loadStudentAnnouncements() {
+    const box = document.getElementById("announcementsContainer");
+    const data = JSON.parse(localStorage.getItem("announcements")) || [];
+    box.innerHTML = data.length ? "" : "<p>No announcements available.</p>";
+
+    data.forEach(a => {
+        box.innerHTML += `
+            <div class="article-card">
+                <h3>${a.title}</h3>
+                <p>${a.message}</p>
+            </div>`;
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadStudentEvents();
+    loadStudentAnnouncements();
+});
 </script>
+
+
 
 </body>
 </html>
