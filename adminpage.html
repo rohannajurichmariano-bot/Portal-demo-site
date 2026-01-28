@@ -329,63 +329,131 @@ button {
             </tr>
         </thead>
         <tbody id="studentTableBody"></tbody>
+
     </table>
 </section>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = "https://xxxxx.supabase.co";
-const SUPABASE_KEY = "YOUR_PUBLIC_ANON_KEY";
+document.addEventListener("DOMContentLoaded", () => {
+    loadStudents();
+    loadEvents();
+    loadAnnouncements();
+});
 
-window.supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-</script>
-
-<script src="supabase.js"></script>
-<script>
-const supabase = window.supabaseClient;
-
-async function loadStudents() {
-  const { data, error } = await supabase
-    .from("students")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  const tbody = document.getElementById("studentTable");
-  tbody.innerHTML = "";
-
-  data.forEach(student => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${student.student_id}</td>
-        <td>${student.full_name}</td>
-        <td>${student.grade_section}</td>
-        <td>${student.status}</td>
-        <td>
-          ${
-            student.status === "pending"
-              ? `<button onclick="approveStudent('${student.id}')">Approve</button>`
-              : "Approved"
-          }
-        </td>
-      </tr>
-    `;
-  });
+function toggleMenu() {
+    const menu = document.getElementById("mobileMenu");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
-async function approveStudent(id) {
-  await supabase
-    .from("students")
-    .update({ status: "approved" })
-    .eq("id", id);
+function loadStudents() {
+    const tbody = document.getElementById("studentTableBody");
+    tbody.innerHTML = "";
+    const students = JSON.parse(localStorage.getItem("students")) || [];
 
-  loadStudents();
+    students.forEach(s => {
+        tbody.innerHTML += `
+        <tr>
+            <td data-label="ID">${s.id}</td>
+            <td data-label="Name">${s.name}</td>
+            <td data-label="Grade">${s.grade}</td>
+            <td data-label="Status" class="status ${s.status.toLowerCase()}">${s.status}</td>
+            <td data-label="Action">
+                <button onclick="updateStatus('${s.id}','Confirmed')">Confirm</button>
+                <button onclick="updateStatus('${s.id}','Pending')">Pending</button>
+                <button class="delete-btn" onclick="deleteStudent('${s.id}')">Delete</button>
+            </td>
+        </tr>`;
+    });
 }
 
-loadStudents();
+function updateStatus(id, status) {
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+    students.forEach(s => { if (s.id === id) s.status = status; });
+    localStorage.setItem("students", JSON.stringify(students));
+    loadStudents();
+}
+
+function deleteStudent(id) {
+    if (!confirm("Delete this student?")) return;
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+    students = students.filter(s => s.id !== id);
+    localStorage.setItem("students", JSON.stringify(students));
+    loadStudents();
+}
+
+function openEventForm() {
+    const title = prompt("Event Title:");
+    const date = prompt("Event Date:");
+    const image = prompt("Image URL:");
+    const description = prompt("Description:");
+    if (!title || !date || !image || !description) return;
+
+    const events = JSON.parse(localStorage.getItem("events")) || [];
+    events.push({ title, date, image, description });
+    localStorage.setItem("events", JSON.stringify(events));
+    loadEvents();
+}
+
+function loadEvents() {
+    const container = document.getElementById("eventsContainer");
+    container.innerHTML = "";
+    const events = JSON.parse(localStorage.getItem("events")) || [];
+
+    events.forEach((e, i) => {
+        container.innerHTML += `
+        <div class="event-card">
+            <h3>${e.title} — ${e.date}</h3>
+            <img src="${e.image}">
+            <p>${e.description}</p>
+            <button class="delete-btn" onclick="deleteEvent(${i})">Delete</button>
+        </div>`;
+    });
+}
+
+function deleteEvent(i) {
+    const events = JSON.parse(localStorage.getItem("events")) || [];
+    events.splice(i, 1);
+    localStorage.setItem("events", JSON.stringify(events));
+    loadEvents();
+}
+
+function openAnnouncementForm() {
+    const title = prompt("Title:");
+    const message = prompt("Message:");
+    if (!title || !message) return;
+
+    const announcements = JSON.parse(localStorage.getItem("announcements")) || [];
+    announcements.push({ title, message });
+    localStorage.setItem("announcements", JSON.stringify(announcements));
+    loadAnnouncements();
+}
+
+function loadAnnouncements() {
+    const container = document.getElementById("announcementsContainer");
+    container.innerHTML = "";
+    const announcements = JSON.parse(localStorage.getItem("announcements")) || [];
+
+    announcements.forEach((a, i) => {
+        container.innerHTML += `
+        <div class="article-card">
+            <h3>${a.title}</h3>
+            <p>${a.message}</p>
+            <button class="delete-btn" onclick="deleteAnnouncement(${i})">Delete</button>
+        </div>`;
+    });
+}
+
+function deleteAnnouncement(i) {
+    const announcements = JSON.parse(localStorage.getItem("announcements")) || [];
+    announcements.splice(i, 1);
+    localStorage.setItem("announcements", JSON.stringify(announcements));
+    loadAnnouncements();
+}
 </script>
+
+
+
+
 
 </body>
 </html>
