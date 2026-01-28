@@ -234,46 +234,57 @@ header h1 {
         <button onclick="closePopup()">OK</button>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-const SUPABASE_URL = "https://xxxxx.supabase.co";
-const SUPABASE_KEY = "YOUR_PUBLIC_ANON_KEY";
+function hashPassword(password) {
+    return btoa(password);
+}
 
-window.supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-</script>
- <script src="supabase.js"></script>
-<script>
-const supabase = window.supabaseClient;
+function showPopup(title, message, redirect = "") {
+    document.getElementById("popup-title").innerText = title;
+    document.getElementById("popup-message").innerText = message;
 
-async function registerStudent() {
-  const student_id = document.getElementById("studentId").value;
-  const full_name = document.getElementById("fullName").value;
-  const grade_section = document.getElementById("grade").value;
-  const phone = document.getElementById("phone").value;
-  const password = document.getElementById("password").value;
+    const popup = document.getElementById("popup");
+    popup.classList.remove("hidden");
+    popup.dataset.redirect = redirect;
+}
 
-  const { error } = await supabase
-    .from("students")
-    .insert([{
-      student_id,
-      full_name,
-      grade_section,
-      phone,
-      password,
-      status: "pending"
-    }]);
+function closePopup() {
+    const popup = document.getElementById("popup");
+    popup.classList.add("hidden");
 
-  if (error) {
-    alert(error.message);
-  } else {
-    alert("Registration successful! Wait for admin approval.");
-    location.href = "student-login.html";
-  }
+    if (popup.dataset.redirect) {
+        window.location.href = popup.dataset.redirect;
+    }
+}
+
+function registerStudent(e) {
+    e.preventDefault();
+
+    const student = {
+        id: document.getElementById("idNumber").value.trim(),
+        name: document.getElementById("name").value.trim(),
+        grade: document.getElementById("grade").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        password: hashPassword(document.getElementById("password").value),
+        status: "Pending",
+        registeredAt: Date.now()
+    };
+
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+    students.push(student);
+    localStorage.setItem("students", JSON.stringify(students));
+
+    showPopup(
+        "Registration Successful",
+        "Student registered successfully. Waiting for admin approval.",
+        "student-login.html"
+    );
 }
 </script>
+
+
+
 
 </body>
 </html>
